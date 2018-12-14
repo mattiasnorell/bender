@@ -1,0 +1,36 @@
+{
+    "build": {
+        "path": "/temp/publish/"
+    },
+    "projects": [
+        {
+            "id": "feedbag-master",
+            "name": "Feedbag",
+            "repositoryUrl": "https://github.com/mattiasnorell/feedbag.git",
+            "repositoryBranch": "master",
+            "version": "1.0.3",
+            "build": {
+                "destination": "/temp/projects/feedbag",
+                "clearDestinationFolder": true,
+                "steps": [
+                    {
+                        "application": "git",
+                        "arguments": "clone --single-branch -b {repositoryBranch} {repositoryUrl} /temp/publish/feedbag-master/source",
+                    },
+                    {
+                        "application": "git",
+                        "arguments": "dotnet publish /temp/publish/feedbag-master/source --framework netcoreapp2.1 --runtime osx.10.11-x64 --output /temp/publish/feedbag-master/compiled"
+                    },
+                    {
+                        "application": "mv",
+                        "arguments": "/temp/publish/feedbag-master/compiled/* /temp/projects/feedbag"
+                    },
+                    {
+                        "application": "chmod",
+                        "arguments": "+x /temp/projects/feedbag/feedbag"
+                    }
+                ]
+            }
+        }
+    ]
+}

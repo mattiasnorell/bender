@@ -1,7 +1,7 @@
 import Vue from 'vue';
 import App from './App.vue';
 import store from './store';
-import 'vue-material/dist/vue-material.min.css';
+import 'vue-material/dist/vue-material.css';
 
 Vue.config.productionTip = false;
 

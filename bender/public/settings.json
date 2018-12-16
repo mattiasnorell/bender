@@ -9,13 +9,13 @@
             "repositoryUrl": "https://github.com/mattiasnorell/feedbag.git",
             "repositoryBranch": "master",
             "version": "1.0.3",
-            "build": {
+            "buildConfiguration": {
                 "destination": "/temp/projects/feedbag",
                 "clearDestinationFolder": true,
                 "steps": [
                     {
                         "application": "git",
-                        "arguments": "clone --single-branch -b {repositoryBranch} {repositoryUrl} /temp/publish/feedbag-master/source",
+                        "arguments": "clone --single-branch -b master https://github.com/mattiasnorell/feedbag.git /temp/publish/feedbag-master/source",
                     },
                     {
                         "application": "git",

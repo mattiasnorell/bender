@@ -20,13 +20,13 @@
 </template>
 
 <script lang="ts">
-import axios from 'axios';
 import { Component, Prop, Vue } from 'vue-property-decorator';
 import Project from './Project.vue';
 import { ProjectItem } from './ProjectItem';
 import { Settings } from './Settings';
 import { DeployEnviroments } from './DeployEnviroment';
 import { MdCard, MdTable } from 'vue-material/dist/components';
+import axios, { AxiosResponse, AxiosAdapter, AxiosInstance } from 'axios';
 
 Vue.use(MdCard);
 Vue.use(MdTable);
@@ -40,41 +40,10 @@ export default class ProjectList extends Vue {
   public projects!: ProjectItem[];
 
   public mounted(): void {
-    this.updateProjectList();
-  }
-
-  private updateProjectList(): void {
-    const projects = new Array<ProjectItem>();
-    for (let i = 0; i < 15; i++) {
-      const project = new ProjectItem();
-      project.id = i.toString();
-      project.name = 'Project name ' + i;
-      project.lastDeployDateTime = new Date();
-      project.version = '1.0.' + i.toString();
-      project.enviroments = new Array<DeployEnviroments>();
-
-      const enviromentProd = new DeployEnviroments();
-      enviromentProd.id = 'prod';
-      enviromentProd.name = 'Production';
-      project.enviroments.push(enviromentProd);
-
-      const enviromentTest = new DeployEnviroments();
-      enviromentTest.id = 'test';
-      enviromentTest.name = 'Test';
-      project.enviroments.push(enviromentTest);
-
-      projects.push(project);
-    }
-
-    this.projects = projects;
-  }
-
-/*
- axios.get<Settings>('settings.json').then((response) => {
-
-      this.projects = mapped.projects;
+    axios.get('http://localhost:5010/api/projects/getall').then((response: AxiosResponse) => {
+      this.projects = response.data;
     });
- */
+  }
 
   private data() {
     return {

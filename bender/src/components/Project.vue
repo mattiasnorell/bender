@@ -14,6 +14,17 @@
       @md-cancel="confirmDeploy = false"
       @md-confirm="onConfirmDeploy" />
 
+      <md-dialog :md-active.sync="showDeployDialog">
+          <md-dialog-title>Deploying!</md-dialog-title>
+
+          <md-dialog-content>
+           {{ deployProgress }}
+          </md-dialog-content>
+          <md-dialog-actions>
+            <md-button class="md-primary" @click="showDeployDialog = false">Close</md-button>
+          </md-dialog-actions>
+        </md-dialog>
+
         <md-menu md-direction="bottom-start">
           <md-button class="md-raised" md-menu-trigger>Deploy</md-button>
 
@@ -91,11 +102,15 @@ export default class Project extends Vue {
   @Prop() private projectItem!: ProjectItem;
 
   private confirmDeploy: boolean = false;
+  private showDeployDialog: boolean = false;
+  private deployProgress: string = '';
 
   private data() {
     return {
       showHistory: false,
       confirmDeploy: this.confirmDeploy,
+      showDeployDialog: this.showDeployDialog,
+      deployProgress: this.deployProgress,
     };
   }
 
@@ -109,8 +124,9 @@ export default class Project extends Vue {
 
   private onConfirmDeploy(): void {
     this.confirmDeploy = false;
-    axios.get('http://localhost:5010/api/projects/deploy?id=feedbag-master').then((response: AxiosResponse) => {
-      alert(response.data);
+    this.showDeployDialog = true;
+    axios.post('http://localhost:5010/api/projects/deploy?id=feedbag-master').then((response: AxiosResponse) => {
+      this.deployProgress = response.data.join(',');
     });
   }
 }

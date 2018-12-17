@@ -24,9 +24,9 @@ namespace BenderApi.Controllers
         [Route("getall")]
         public ActionResult<IEnumerable<Project>> Get(){
             var project = new Project(){
-                Id = "feedbag-master",
-                Name = "Feedbag",
-                BranchName = "feedbag-master",
+                Id = "couchpotato-master",
+                Name = "Couchpotato",
+                BranchName = "couchpotato-master",
                 Version = "1.0.23",
                 RepositoryUrl = "https://github.com/mattiasnorell/feedbag.git",
                 LastDeployDateTime = DateTime.Now,
@@ -42,14 +42,23 @@ namespace BenderApi.Controllers
             return new List<Project>() { project };
         }
 
-        [HttpGet]
+        [HttpPost]
+        [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
         [Route("deploy")]
         public async Task<ActionResult<List<string>>> Deploy(string id)
         {
             var buildSteps = new List<BuildStep>{
                 new BuildStep(){
-                    Application = "ls",
-                    Arguments = ""
+                    Application = "git",
+                    Arguments = "clone --single-branch -b master https://github.com/mattiasnorell/couchpotato.git /Users/mattiasnorell/Documents/test/couchpotato"
+                },
+                new BuildStep(){
+                    Application = "dotnet",
+                    Arguments = "publish /Users/mattiasnorell/Documents/test/couchpotato --framework netcoreapp2.1 --runtime osx.10.11-x64 --output /Users/mattiasnorell/Documents/test/couchpotato/compiled"
+                },
+                new BuildStep(){
+                    Application = "mv",
+                    Arguments = "/Users/mattiasnorell/Documents/test/couchpotato/compiled/* /Users/mattiasnorell/Documents/test/couchpotato/site"
                 }
             };
 
@@ -58,6 +67,8 @@ namespace BenderApi.Controllers
             foreach(var step in buildSteps){
                 var buildStepResult = await this.deployHandler.RunDeployStep(step.Application, step.Arguments);
                 result.Add(buildStepResult);
+
+                
             }
 
             return result;

@@ -2,6 +2,7 @@
 using System;
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
+using BenderApi.Business.Database;
 using BenderApi.Business.Deploy;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Cors.Infrastructure;
@@ -43,6 +44,7 @@ namespace BenderApi
             var builder = new ContainerBuilder();
             builder.Populate(services);  
             builder.RegisterType<DeployHandler>().As<IDeployHandler>();   
+            builder.RegisterType<DatabaseRepository>().As<IDatabaseRepository>();   
 
             var ApplicationContainer = builder.Build();
             
@@ -63,6 +65,8 @@ namespace BenderApi
             {
                 app.UseHsts();
             }
+
+            app.UseDeveloperExceptionPage();
 
             app.UseHttpsRedirection();
             app.UseMvc();

@@ -3,12 +3,13 @@ using System.Collections.Generic;
 
 namespace BenderApi.Models{
     public class Project{
-        public string Id { get ;set; }
-        public string Name {get ;set;}
+        public int Id { get ;set; }
+        public string ProjectId { get ;set; }
+        public string ProjectName {get ;set;}
         public string RepositoryUrl{ get;set;}
         public string BranchName { get;set;}
         public string Version { get;set; }
         public DateTime LastDeployDateTime { get ;set;}
-        public IEnumerable<Enviroment> Enviroments{ get; set; }
+        public IEnumerable<DeployEnvironment> DeployEnvironments { get; set; }
     }
 }

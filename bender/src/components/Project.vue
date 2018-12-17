@@ -1,7 +1,7 @@
 <template>
     <md-table-row>
-      <md-table-cell>{{ projectItem.id }}</md-table-cell>
-      <md-table-cell>{{ projectItem.name }}</md-table-cell>
+      <md-table-cell>{{ projectItem.projectId }}</md-table-cell>
+      <md-table-cell>{{ projectItem.projectName }}</md-table-cell>
       <md-table-cell>{{ projectItem.lastDeployDateTime | moment("YYYY-MM-DD HH:mm") }}</md-table-cell>
       <md-table-cell>{{ projectItem.version }}</md-table-cell>
       <md-table-cell>
@@ -29,7 +29,7 @@
           <md-button class="md-raised" md-menu-trigger>Deploy</md-button>
 
           <md-menu-content>
-            <md-menu-item v-for="enviroment in projectItem.enviroments" v-bind:key="enviroment.id" @click="deploy(enviroment.id)">{{enviroment.name}}</md-menu-item>
+            <md-menu-item v-for="environment in projectItem.deployEnvironments" v-bind:key="environment.id" @click="deploy(environment.id)">{{environment.name}}</md-menu-item>
           </md-menu-content>
         </md-menu>
 

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
+using BenderApi.Business.Database;
 using BenderApi.Business.Deploy;
 using BenderApi.Models;
 using Microsoft.AspNetCore.Mvc;
@@ -15,31 +16,21 @@ namespace BenderApi.Controllers
     public class ProjectsController : ControllerBase
     {
         private readonly IDeployHandler deployHandler;
+        private readonly IDatabaseRepository databaseRepository;
 
-        public ProjectsController(IDeployHandler deployHandler){
+        public ProjectsController(IDeployHandler deployHandler, IDatabaseRepository databaseRepository){
             this.deployHandler = deployHandler;
+            this.databaseRepository = databaseRepository;
         }
         
         [HttpGet]
+        [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
         [Route("getall")]
         public ActionResult<IEnumerable<Project>> Get(){
-            var project = new Project(){
-                Id = "couchpotato-master",
-                Name = "Couchpotato",
-                BranchName = "couchpotato-master",
-                Version = "1.0.23",
-                RepositoryUrl = "https://github.com/mattiasnorell/feedbag.git",
-                LastDeployDateTime = DateTime.Now,
-                Enviroments = new List<Enviroment>(){
-                    new Enviroment
-                    {
-                        Id = "prod",
-                        Name = "Production"
-                    }
-                }
-            };
 
-            return new List<Project>() { project };
+            var projects = this.databaseRepository.GetAllProjects();
+            
+            return projects.ToList();
         }
 
         [HttpPost]

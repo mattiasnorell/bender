@@ -1,10 +1,10 @@
 using System.Collections.Generic;
 
 namespace BenderApi.Models{
-    public class Enviroment{
-        public string Id { get ;set; }
+    public class DeployEnvironment{
+        public int Id { get ;set; }
         public string Name {get ;set;}
         public string Destination{ get;set;}
-        public IEnumerable<BuildConfiguration> BuildConfiguration { get;set;}
+        public BuildConfiguration BuildConfiguration { get;set;}
     }
 }

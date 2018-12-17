@@ -2,79 +2,82 @@
     <md-table-row>
       <md-table-cell>{{ projectItem.projectId }}</md-table-cell>
       <md-table-cell>{{ projectItem.projectName }}</md-table-cell>
-      <md-table-cell>{{ projectItem.lastDeployDateTime | moment("YYYY-MM-DD HH:mm") }}</md-table-cell>
+      <md-table-cell>{{ projectItem.lastDeployAtUtc | moment("YYYY-MM-DD HH:mm") }}</md-table-cell>
       <md-table-cell>{{ projectItem.version }}</md-table-cell>
       <md-table-cell>
-        <md-dialog-confirm
-      :md-active.sync="confirmDeploy"
-      md-title="Ok, just to make sure..."
-      md-content="You are about to deploy <strong>Branch name</strong> to <strong>Environment</strong>"
-      md-confirm-text="Deploy!"
-      md-cancel-text="Cancel"
-      @md-cancel="confirmDeploy = false"
-      @md-confirm="onConfirmDeploy" />
+      
+        <md-dialog-confirm :md-active.sync="confirmDeploy"
+        md-title="Ok, just to make sure..."
+        md-content="You are about to deploy <strong>Branch name</strong> to <strong>Environment</strong>"
+        md-confirm-text="Deploy!"
+        md-cancel-text="Cancel"
+        @md-cancel="confirmDeploy = false"
+        @md-confirm="onConfirmDeploy" />
 
-      <md-dialog :md-active.sync="showDeployDialog">
-          <md-dialog-title>Deploying!</md-dialog-title>
+        <md-dialog :md-active.sync="showDeployDialog">
+            <md-dialog-title>Deploying!</md-dialog-title>
 
-          <md-dialog-content>
-           {{ deployProgress }}
-          </md-dialog-content>
-          <md-dialog-actions>
-            <md-button class="md-primary" @click="showDeployDialog = false">Close</md-button>
-          </md-dialog-actions>
-        </md-dialog>
+            <md-dialog-content>
 
-        <md-menu md-direction="bottom-start">
-          <md-button class="md-raised" md-menu-trigger>Deploy</md-button>
+              <span v-for="step in deployProgress">
+                {{ step }}
+              </span>
+            </md-dialog-content>
+            <md-dialog-actions>
+              <md-button class="md-primary" @click="showDeployDialog = false">Close</md-button>
+            </md-dialog-actions>
+          </md-dialog>
 
-          <md-menu-content>
-            <md-menu-item v-for="environment in projectItem.deployEnvironments" v-bind:key="environment.id" @click="deploy(environment.id)">{{environment.name}}</md-menu-item>
-          </md-menu-content>
-        </md-menu>
+          <md-menu md-direction="bottom-start">
+            <md-button class="md-raised" md-menu-trigger :disabled="!projectItem.deployEnvironments || projectItem.deployEnvironments.length == 0">Deploy</md-button>
 
-        <md-button class="md-raised" disabled @click="test()" md-menu-trigger>Test</md-button>
-        <md-button class="md-raised" @click="showHistory = true" md-menu-trigger>Logs</md-button>
+            <md-menu-content>
+              <md-menu-item v-for="environment in projectItem.deployEnvironments" v-bind:key="environment.id" @click="deploy(projectItem.id, environment.id)">{{environment.name}}</md-menu-item>
+            </md-menu-content>
+          </md-menu>
 
-         <md-dialog :md-active.sync="showHistory">
-          <md-dialog-title>History</md-dialog-title>
+          <md-button class="md-raised" disabled @click="test()" md-menu-trigger>Test</md-button>
+          <md-button class="md-raised" @click="showHistory = true" md-menu-trigger>Logs</md-button>
 
-          <md-dialog-content>
-            <md-tabs md-dynamic-height>
-              <md-tab md-label="1.0.3 (Current)">
-                <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Ullam mollitia dolorum dolores quae commodi impedit possimus qui, atque at voluptates cupiditate. Neque quae culpa suscipit praesentium inventore ducimus ipsa aut.</p>
-                <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Ullam mollitia dolorum dolores quae commodi impedit possimus qui, atque at voluptates cupiditate. Neque quae culpa suscipit praesentium inventore ducimus ipsa aut.</p>
-                <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Ullam mollitia dolorum dolores quae commodi impedit possimus qui, atque at voluptates cupiditate. Neque quae culpa suscipit praesentium inventore ducimus ipsa aut.</p>
-                <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Ullam mollitia dolorum dolores quae commodi impedit possimus qui, atque at voluptates cupiditate. Neque quae culpa suscipit praesentium inventore ducimus ipsa aut.</p>
-                <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Ullam mollitia dolorum dolores quae commodi impedit possimus qui, atque at voluptates cupiditate. Neque quae culpa suscipit praesentium inventore ducimus ipsa aut.</p>
-                <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Ullam mollitia dolorum dolores quae commodi impedit possimus qui, atque at voluptates cupiditate. Neque quae culpa suscipit praesentium inventore ducimus ipsa aut.</p>
-                <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Ullam mollitia dolorum dolores quae commodi impedit possimus qui, atque at voluptates cupiditate. Neque quae culpa suscipit praesentium inventore ducimus ipsa aut.</p>
-                <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Ullam mollitia dolorum dolores quae commodi impedit possimus qui, atque at voluptates cupiditate. Neque quae culpa suscipit praesentium inventore ducimus ipsa aut.</p>
-                <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Ullam mollitia dolorum dolores quae commodi impedit possimus qui, atque at voluptates cupiditate. Neque quae culpa suscipit praesentium inventore ducimus ipsa aut.</p>
-                <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Ullam mollitia dolorum dolores quae commodi impedit possimus qui, atque at voluptates cupiditate. Neque quae culpa suscipit praesentium inventore ducimus ipsa aut.</p>
-                <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Ullam mollitia dolorum dolores quae commodi impedit possimus qui, atque at voluptates cupiditate. Neque quae culpa suscipit praesentium inventore ducimus ipsa aut.</p>
-                <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Ullam mollitia dolorum dolores quae commodi impedit possimus qui, atque at voluptates cupiditate. Neque quae culpa suscipit praesentium inventore ducimus ipsa aut.</p>
-                <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Ullam mollitia dolorum dolores quae commodi impedit possimus qui, atque at voluptates cupiditate. Neque quae culpa suscipit praesentium inventore ducimus ipsa aut.</p>
-              </md-tab>
+          <md-dialog :md-active.sync="showHistory">
+            <md-dialog-title>History</md-dialog-title>
 
-              <md-tab md-label="1.0.2">
-                <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Ullam mollitia dolorum dolores quae commodi impedit possimus qui, atque at voluptates cupiditate. Neque quae culpa suscipit praesentium inventore ducimus ipsa aut.</p>
-                <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Ullam mollitia dolorum dolores quae commodi impedit possimus qui, atque at voluptates cupiditate. Neque quae culpa suscipit praesentium inventore ducimus ipsa aut.</p>
-                <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Ullam mollitia dolorum dolores quae commodi impedit possimus qui, atque at voluptates cupiditate. Neque quae culpa suscipit praesentium inventore ducimus ipsa aut.</p>
-                <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Ullam mollitia dolorum dolores quae commodi impedit possimus qui, atque at voluptates cupiditate. Neque quae culpa suscipit praesentium inventore ducimus ipsa aut.</p>
-                <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Ullam mollitia dolorum dolores quae commodi impedit possimus qui, atque at voluptates cupiditate. Neque quae culpa suscipit praesentium inventore ducimus ipsa aut.</p>
-              </md-tab>
+            <md-dialog-content>
+              <md-tabs md-dynamic-height>
+                <md-tab md-label="1.0.3 (Current)">
+                  <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Ullam mollitia dolorum dolores quae commodi impedit possimus qui, atque at voluptates cupiditate. Neque quae culpa suscipit praesentium inventore ducimus ipsa aut.</p>
+                  <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Ullam mollitia dolorum dolores quae commodi impedit possimus qui, atque at voluptates cupiditate. Neque quae culpa suscipit praesentium inventore ducimus ipsa aut.</p>
+                  <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Ullam mollitia dolorum dolores quae commodi impedit possimus qui, atque at voluptates cupiditate. Neque quae culpa suscipit praesentium inventore ducimus ipsa aut.</p>
+                  <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Ullam mollitia dolorum dolores quae commodi impedit possimus qui, atque at voluptates cupiditate. Neque quae culpa suscipit praesentium inventore ducimus ipsa aut.</p>
+                  <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Ullam mollitia dolorum dolores quae commodi impedit possimus qui, atque at voluptates cupiditate. Neque quae culpa suscipit praesentium inventore ducimus ipsa aut.</p>
+                  <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Ullam mollitia dolorum dolores quae commodi impedit possimus qui, atque at voluptates cupiditate. Neque quae culpa suscipit praesentium inventore ducimus ipsa aut.</p>
+                  <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Ullam mollitia dolorum dolores quae commodi impedit possimus qui, atque at voluptates cupiditate. Neque quae culpa suscipit praesentium inventore ducimus ipsa aut.</p>
+                  <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Ullam mollitia dolorum dolores quae commodi impedit possimus qui, atque at voluptates cupiditate. Neque quae culpa suscipit praesentium inventore ducimus ipsa aut.</p>
+                  <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Ullam mollitia dolorum dolores quae commodi impedit possimus qui, atque at voluptates cupiditate. Neque quae culpa suscipit praesentium inventore ducimus ipsa aut.</p>
+                  <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Ullam mollitia dolorum dolores quae commodi impedit possimus qui, atque at voluptates cupiditate. Neque quae culpa suscipit praesentium inventore ducimus ipsa aut.</p>
+                  <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Ullam mollitia dolorum dolores quae commodi impedit possimus qui, atque at voluptates cupiditate. Neque quae culpa suscipit praesentium inventore ducimus ipsa aut.</p>
+                  <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Ullam mollitia dolorum dolores quae commodi impedit possimus qui, atque at voluptates cupiditate. Neque quae culpa suscipit praesentium inventore ducimus ipsa aut.</p>
+                  <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Ullam mollitia dolorum dolores quae commodi impedit possimus qui, atque at voluptates cupiditate. Neque quae culpa suscipit praesentium inventore ducimus ipsa aut.</p>
+                </md-tab>
 
-              <md-tab md-label="1.0.1">
-                <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Ullam mollitia dolorum dolores quae commodi impedit possimus qui, atque at voluptates cupiditate. Neque quae culpa suscipit praesentium inventore ducimus ipsa aut.</p>
-                <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Ullam mollitia dolorum dolores quae commodi impedit possimus qui, atque at voluptates cupiditate. Neque quae culpa suscipit praesentium inventore ducimus ipsa aut.</p>
-              </md-tab>
-            </md-tabs>
-          </md-dialog-content>
-          <md-dialog-actions>
-            <md-button class="md-primary" @click="showHistory = false">Close</md-button>
-          </md-dialog-actions>
-        </md-dialog>
+                <md-tab md-label="1.0.2">
+                  <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Ullam mollitia dolorum dolores quae commodi impedit possimus qui, atque at voluptates cupiditate. Neque quae culpa suscipit praesentium inventore ducimus ipsa aut.</p>
+                  <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Ullam mollitia dolorum dolores quae commodi impedit possimus qui, atque at voluptates cupiditate. Neque quae culpa suscipit praesentium inventore ducimus ipsa aut.</p>
+                  <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Ullam mollitia dolorum dolores quae commodi impedit possimus qui, atque at voluptates cupiditate. Neque quae culpa suscipit praesentium inventore ducimus ipsa aut.</p>
+                  <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Ullam mollitia dolorum dolores quae commodi impedit possimus qui, atque at voluptates cupiditate. Neque quae culpa suscipit praesentium inventore ducimus ipsa aut.</p>
+                  <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Ullam mollitia dolorum dolores quae commodi impedit possimus qui, atque at voluptates cupiditate. Neque quae culpa suscipit praesentium inventore ducimus ipsa aut.</p>
+                </md-tab>
+
+                <md-tab md-label="1.0.1">
+                  <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Ullam mollitia dolorum dolores quae commodi impedit possimus qui, atque at voluptates cupiditate. Neque quae culpa suscipit praesentium inventore ducimus ipsa aut.</p>
+                  <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Ullam mollitia dolorum dolores quae commodi impedit possimus qui, atque at voluptates cupiditate. Neque quae culpa suscipit praesentium inventore ducimus ipsa aut.</p>
+                </md-tab>
+              </md-tabs>
+            </md-dialog-content>
+            <md-dialog-actions>
+              <md-button class="md-primary" @click="showHistory = false">Close</md-button>
+            </md-dialog-actions>
+          </md-dialog>
       </md-table-cell>
     </md-table-row>
 
@@ -114,7 +117,7 @@ export default class Project extends Vue {
     };
   }
 
-  private deploy(enviroment: string) {
+  private deploy(projectId: number, environmentId: int) {
     this.confirmDeploy = true;
   }
 
@@ -125,8 +128,8 @@ export default class Project extends Vue {
   private onConfirmDeploy(): void {
     this.confirmDeploy = false;
     this.showDeployDialog = true;
-    axios.post('http://localhost:5010/api/projects/deploy?id=feedbag-master').then((response: AxiosResponse) => {
-      this.deployProgress = response.data.join(',');
+    axios.post('http://localhost:5010/api/projects/deploy', { projectId: 1, environmentId: 4 }).then((response: AxiosResponse) => {
+      this.deployProgress = response.data;
     });
   }
 }

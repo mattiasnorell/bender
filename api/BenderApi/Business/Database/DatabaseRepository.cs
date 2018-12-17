@@ -6,6 +6,7 @@ using BenderApi.Models;
 using System.Data.SQLite;
 using System;
 using Dapper;
+using System.Linq;
 
 namespace BenderApi.Business.Database{
     public class DatabaseRepository: IDatabaseRepository
@@ -25,13 +26,36 @@ namespace BenderApi.Business.Database{
             return new SQLiteConnection("Data Source=" + DbFile);
         }
 
+        public Project GetProject(int id){
+            using (var conn = DatabaseConnection())
+            {
+                var project = conn.Query<Project>(@"select * from Projects where Id = @id", new {id}).ToList().FirstOrDefault();
+
+                if(project == null){
+                    return null;
+                }
+
+                var environments = GetDeployEnvironments(project.Id);
+                if(environments != null){
+                    project.DeployEnvironments = environments;
+                }
+
+                return project;
+            }
+        }
+
         public IEnumerable<Project> GetAllProjects(){
             using (var conn = DatabaseConnection())
             {
                 var projects = conn.Query<Project>(@"select * from Projects");
 
                 foreach(var project in projects){
-                    project.DeployEnvironments = GetDeployEnvironments(project.Id);
+                    var environments = GetDeployEnvironments(project.Id);
+                    if(environments == null){
+                        continue;
+                    }
+
+                    project.DeployEnvironments = environments;
                 }
 
                 return projects;
@@ -41,7 +65,7 @@ namespace BenderApi.Business.Database{
         private IEnumerable<DeployEnvironment> GetDeployEnvironments(int id){
             using (var conn = DatabaseConnection())
             {
-                var environments = conn.Query<DeployEnvironment>(@"select * from Environments");
+                var environments = conn.Query<DeployEnvironment>(@"select * from Environments where ProjectId = @id", new { id });
                 var configurations = new List<BuildConfiguration>();
 
                 foreach(var environment in environments){
@@ -60,7 +84,7 @@ namespace BenderApi.Business.Database{
         private IEnumerable<BuildStep> GetBuildSteps(int id){
             using (var conn = DatabaseConnection())
             {
-                return conn.Query<BuildStep>(@"select * from BuildSteps");
+                return conn.Query<BuildStep>(@"select * from BuildSteps where EnvironmentId = @id", new { id });
             }
         }
 

@@ -9,7 +9,7 @@ namespace BenderApi.Models{
         public string RepositoryUrl{ get;set;}
         public string BranchName { get;set;}
         public string Version { get;set; }
-        public DateTime LastDeployDateTime { get ;set;}
+        public DateTime LastDeployAtUtc { get ;set;}
         public IEnumerable<DeployEnvironment> DeployEnvironments { get; set; }
     }
 }

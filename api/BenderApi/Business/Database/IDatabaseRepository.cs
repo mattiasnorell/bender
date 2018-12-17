@@ -4,6 +4,7 @@ using BenderApi.Models;
 
 namespace BenderApi.Business.Database{
     public interface IDatabaseRepository {
+        Project GetProject(int id);
         IEnumerable<Project> GetAllProjects();
     }
 }

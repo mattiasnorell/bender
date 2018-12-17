@@ -18,6 +18,7 @@ namespace BenderApi.Business.Deploy{
                     FileName = app,
                     Arguments = arguments,
                     RedirectStandardOutput = true,
+                    RedirectStandardError = true,
                     UseShellExecute = false,
                     CreateNoWindow = true,
                 }

@@ -7,7 +7,7 @@
             "type": "process",
             "args": [
                 "build",
-                "${workspaceFolder}/api/BenderApi/BenderApi.csproj"
+                "${workspaceFolder}/BenderApi.csproj"
             ],
             "problemMatcher": "$msCompile"
         }

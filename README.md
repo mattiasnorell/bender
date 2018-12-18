@@ -1,2 +1,2 @@
 # Bender
-Like TeamCity, but without all the fancy features
+Like TeamCity, but without all the fancy features.
